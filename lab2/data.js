@@ -49,7 +49,6 @@ function submitForm() {
     document.getElementById('address').classList.remove('invalid');
   }
 
-  // If the form is valid, update the displayed data
   if (isValid) {
     document.getElementById('displayPib').textContent = pibValue;
     document.getElementById('displayVariant').textContent = variantValue;

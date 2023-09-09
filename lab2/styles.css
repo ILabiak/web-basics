@@ -22,7 +22,6 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    /* justify-content: space-between; */
     border: 2px solid green;
     height: 100%;
     width: 35%;
@@ -54,7 +53,6 @@
     outline: none;
     padding-left: 15px;
     border-radius: 15px;
-    /* border: 1px solid lightgrey; */
     border-bottom-width: 2px;
     font-size: 17px;
     transition: all 0.3s ease;
@@ -64,9 +62,6 @@
     border-color: red;
 }
 
-.field input:focus {
-    /* border-color: #006400; */
-}
 
 .field input::placeholder {
     color: #999;
@@ -119,7 +114,6 @@ form {
     display: flex;
     align-items: center;
     flex-direction: column;
-    /* justify-content: space-between; */
     border: 2px solid green;
     height: 100%;
     width: 20%;
