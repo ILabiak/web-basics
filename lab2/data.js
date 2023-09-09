@@ -1,7 +1,10 @@
-const pibRegex =
-  /^[А-ЯҐЄІЇа-яґєії]{2,15}\s[А-ЯҐЄІЇа-яґєії]{2,15}(?:\s[А-ЯҐЄІЇа-яґєії]{2,15})$/;
-const variantRegex = /[0-9]+/;
-const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+const validationRules = {
+  pib: /^[А-ЯҐЄІЇа-яґєії]{2,15}\s[А-ЯҐЄІЇ].[А-ЯҐЄІЇ].$/,
+  variant: /^[0-9]{1,2}$/,
+  phone: /^[(][0-9]{3}[)]-[0-9]{3}-[0-9]{2}-[0-9]{2}$/,
+  faculty: /^[А-ЯҐЄІЇа-яґєії]{2,4}$/,
+  address: /^м.\s[А-ЯҐЄІЇа-яґєії]{3,20}$/,
+};
 
 function submitForm() {
   event.preventDefault();
@@ -14,39 +17,16 @@ function submitForm() {
 
   let isValid = true;
 
-  if (!validatePIB(pibValue)) {
-    document.getElementById('pib').classList.add('invalid');
-    isValid = false;
-  } else {
-    document.getElementById('pib').classList.remove('invalid');
-  }
+  for (const field in validationRules) {
+    const value = document.getElementById(field).value;
+    const isValidField = validateField(field, value);
 
-  if (!validateVariant(variantValue)) {
-    document.getElementById('variant').classList.add('invalid');
-    isValid = false;
-  } else {
-    document.getElementById('variant').classList.remove('invalid');
-  }
-
-  if (!validatePhone(phoneValue)) {
-    document.getElementById('phone').classList.add('invalid');
-    isValid = false;
-  } else {
-    document.getElementById('phone').classList.remove('invalid');
-  }
-
-  if (!validateFaculty(facultyValue)) {
-    document.getElementById('faculty').classList.add('invalid');
-    isValid = false;
-  } else {
-    document.getElementById('faculty').classList.remove('invalid');
-  }
-
-  if (!validateAdress(addressValue)) {
-    document.getElementById('address').classList.add('invalid');
-    isValid = false;
-  } else {
-    document.getElementById('address').classList.remove('invalid');
+    if (!isValidField) {
+      document.getElementById(field).classList.add('invalid');
+      isValid = false;
+    } else {
+      document.getElementById(field).classList.remove('invalid');
+    }
   }
 
   if (isValid) {
@@ -58,22 +38,6 @@ function submitForm() {
   }
 }
 
-function validatePIB(str) {
-  return pibRegex.test(str);
-}
-
-function validateVariant(str) {
-  return variantRegex.test(str) && parseInt(str) > 0 && parseInt(str) < 11;
-}
-
-function validatePhone(str) {
-  return phoneRegex.test(str);
-}
-
-function validateFaculty(str) {
-  return str.length > 3;
-}
-
-function validateAdress(str) {
-  return str.length > 3;
+function validateField(fieldName, value) {
+  return validationRules[fieldName].test(value);
 }
