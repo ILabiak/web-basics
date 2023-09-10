@@ -15,40 +15,35 @@
 }
 
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 150px;
     background-color: rgb(60, 179, 244);
 }
 
 h2 {
     font-size: 5rem;
+    text-align: center;
+    line-height: 150px;
 }
 
 .content {
-    display: flex;
-    flex-direction: row;
     height: 400px;
 }
 
 .content .image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    float: left;
     width: 75%;
-    background-color: rgb(49, 219, 26);
+    height: 100%;
+    background-image: url('../1.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0px -50px; 
 }
 
-.content .image h2 {
-    padding-top: 100px;
-}
 
 .content .text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    float: right;
     width: 25%;
+    height: 400px;
     background-color: rgb(31, 135, 17);
 }
 
@@ -57,9 +52,7 @@ h2 {
 }
 
 .footer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 250px;
-    background-color: pink;
+    background-image: url('../2.jpg');
+    background-size: 100%;
 }
