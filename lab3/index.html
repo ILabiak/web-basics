@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 3</title>
+  </head>
+  <script type="text/javascript" src="index.js"></script>
+  <body>
+    <div class="input-container">
+      <span>Enter number of users to parse:</span>
+      <div class="input-from">
+        <div class="field">
+          <input
+            id="usersCount"
+            type="number"
+            min="1"
+            value="2"
+            placeholder="Number of users"
+            required
+          />
+        </div>
+        <button onclick="handleBtnClick()">Download</button>
+      </div>
+    </div>
+    <div class="parse-status-container">
+        <p id="parseStatus" class="parse-status">
+            You haven't pressed the button yet!
+        </p>
+    </div>
+    <div class="users-info-container">
+      <div id="userBlocksContainer" class="users-info"></div>
+    </div>
+  </body>
+</html>
