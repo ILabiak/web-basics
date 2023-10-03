@@ -53,8 +53,8 @@ cells.forEach((cell) => {
   });
 
   cell.addEventListener('mouseover', () => {
-    const selectedColor = cell.getAttribute('data-color');
     cell.style.backgroundColor = getRandomColor();
+    cell.setAttribute('data-color', cell.style.backgroundColor)
   });
 
   cell.addEventListener('mouseout', () => {
