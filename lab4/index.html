@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 4</title>
+  </head>
+  <body>
+    <div class="chatContainer">
+      <ul id="messages"></ul>
+      <form id="form" action="">
+        <input id="input" autocomplete="off" /><button>Send</button>
+      </form>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(function () {
+        const socket = io();
+        let username = prompt('Enter your username:');
+
+        while (!username) {
+          username = prompt(
+            'Username cannot be empty. Please enter your username:'
+          );
+        }
+
+        socket.emit('new user', username);
+
+        $('#form').submit(function () {
+          const message = $('#input').val();
+          if (message) {
+            socket.emit('chat message', { username, message });
+            $('#input').val('');
+          }
+          return false;
+        });
+        
+        socket.on('chat message', function (data) {
+          console.log('got message');
+          $('#messages').append(
+            $('<li>').text(data.username + ': ' + data.message)
+          );
+        });
+      });
+    </script>
+  </body>
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .chatContainer {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 700px;
+      height: 500px;
+      border: 2px solid #007bff;
+      border-radius: 5px;
+    }
+
+    #messages {
+      width: 100%;
+      list-style-type: none;
+      padding: 0;
+      /* border: 1px solid #4c4747; */
+    }
+
+    #messages li {
+      margin: 5px 0;
+      padding: 5px 10px;
+      background-color: #c8c8c8;
+      margin-left: 5px;
+      margin-right: 5px;
+      border-radius: 5px;
+    }
+
+    #form {
+      display: flex;
+      align-items: center;
+      justify-content: right;
+      margin-right: 20px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #input {
+      width: 88%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</html>
