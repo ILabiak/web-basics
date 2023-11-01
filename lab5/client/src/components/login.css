@@ -22,7 +22,7 @@
 .loginform {
   overflow: hidden;
   width: 100%;
-  max-width: 390px;
+  max-width: 400px;
   background: #fff;
   padding: 30px;
   position: fixed;
@@ -323,6 +323,105 @@ form .btn input[type='submit'] {
 }
 
 .infoElement{
-  margin-bottom: 5px;
+  text-align: left;
+  /* margin-bottom: 5px; */
+  margin-right: 10px;
   font-size: 2rem;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.infoContainer input {
+  height: 80%;
+  border: 2px solid green;
+  border-radius: 5px;
+  font-size: 2rem;
+  width: 60%;
+}
+
+.infoContainer select {
+  height: 80%;
+  border: 2px solid green;
+  border-radius: 5px;
+  font-size: 2rem;
+  width: 60%;
+}
+
+.saveChangesButton{
+  margin-top: 10px;
+  border-width: 0;
+  color: white;
+  font-size: 1.5rem;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: #228b22;
+  padding: 15px;
+  border-radius: 10px;
+  margin-right: 5px;
+}
+
+.saveChangesButton:hover{
+  background-color: #057b05;
+}
+
+.logOutButton{
+  margin-top: 10px;
+  border-width: 0;
+  color: white;
+  font-size: 1.5rem;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: #e60b0b;
+  padding: 15px;
+  border-radius: 10px;
+  margin-left: 5px;
+}
+
+.logOutButton:hover{
+  background-color: #9e0404;
+}
+
+.userData {
+  overflow: hidden;
+  width: 100%;
+  max-width: 750px;
+  background: #fff;
+  padding: 30px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 15px;
+  border: 5px solid #2e8b57;
+  box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+}
+.userData .title-text {
+  display: flex;
+  width: 200%;
+}
+.userData .title {
+  user-select: none;
+  width: 50%;
+  font-size: 35px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.userData .slide-controls {
+  position: relative;
+  display: flex;
+  height: 50px;
+  width: 100%;
+  overflow: hidden;
+  margin: 30px 0 10px 0;
+  justify-content: space-between;
+  border: 1px solid lightgrey;
+  border-radius: 15px;
 }

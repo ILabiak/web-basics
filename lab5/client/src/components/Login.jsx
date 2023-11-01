@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import './login.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faEye,
@@ -10,12 +10,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Backdrop } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 
 function Login(props) {
     const navigate = useNavigate();
+    const [cookies, setCookie] = useCookies();
     const { open, setOpen, setUserData, loginContainerRef } = props;
     const [email, setEmail] = useState('');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
     const [signupEmail, setSignupEmail] = useState('');
     const [signupPassword, setSignupPassword] = useState('');
@@ -103,15 +106,20 @@ function Login(props) {
             });
             if (response.status === 200) {
                 const responseData = await response.json();
-                setUserData(responseData)
 
+                // const expires = new Date(responseData.expires);
+                // document.cookie = `session=${responseData.session}; expires=${expires.toUTCString()}; path=/`;
+                setCookie('sessionID', responseData.session, {
+                    path: '/',
+                    httpOnly: false,
+                    expires: new Date(responseData.expires)
+                })
                 // alert("Login successfull");
                 setloginSuccess(true);
                 setloginStatusText('Успішна авторизація');
-
                 setTimeout(() => {
-                    setOpen(false)
-                }, 1500)
+                    window.location.reload(false)
+                }, 750)
             } else if (response.status === 401) {
                 // alert("Invalid email or password");
                 setloginSuccess(false);
@@ -177,6 +185,7 @@ function Login(props) {
             console.log(error)
         }
     };
+
 
 
     return (
