@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       UserInfo.belongsTo(models.User, {
         foreignKey: 'user_id',
-        as: 'user',
+        as: 'userinfo_userid_fk',
+        onDelete: 'cascade',
       });
     }
   }

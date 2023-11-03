@@ -54,21 +54,57 @@ module.exports = {
   },
 
   delete(req, res) {
-    return User.findByPk(req.params.id)
-      .then((user) => {
-        if (!user) {
-          return res.status(400).send({
-            message: 'User Not Found',
-          });
-        }
-        return user
-          .destroy()
-          .then(() =>
-            res.status(200).send({ message: 'User was successfully deleted!' })
-          )
-          .catch((error) => res.status(400).send(error));
-      })
-      .catch((error) => res.status(400).send(error));
+    const { session_id, user_data } = req.body;
+    const userToDelete = user_data?.user_id;
+
+    Session.findOne({
+      where: {
+        [Op.and]: [{ session_id }, { expirationDate: { [Op.gt]: new Date() } }],
+      },
+      include: {
+        model: User,
+        as: 'sessions_userid_fk',
+        include: {
+          model: UserInfo,
+          as: 'userinfo_userid_fk',
+        },
+      },
+    }).then((data) => {
+      if (!data) {
+        return res
+          .status(401)
+          .send({ message: 'No user found with this session' });
+      }
+      if (
+        data?.sessions_userid_fk?.userinfo_userid_fk?.user_id !==
+          userToDelete &&
+        !data?.sessions_userid_fk?.userinfo_userid_fk?.admin
+      ) {
+        // console.log({dataUser: data.UserInfo.user_id ,userToChange})
+        // console.log(data)
+        return res
+          .status(401)
+          .send({ message: 'User does not have permission for that action' });
+      }
+      Session.destroy({ where: { user_id: userToDelete } })
+        .then(() => {
+          UserInfo.destroy({ where: { user_id: userToDelete } })
+            .then(() => {
+              User.destroy({ where: { id: userToDelete } })
+                .then(() =>
+                  res
+                    .status(200)
+                    .send({
+                      message:
+                        'User and associated data were successfully deleted!',
+                    })
+                )
+                .catch((error) => res.status(400).send(error));
+            })
+            .catch((error) => res.status(400).send(error));
+        })
+        .catch((error) => res.status(400).send(error));
+    });
   },
 
   login(req, res) {
@@ -115,17 +151,24 @@ module.exports = {
       where: {
         [Op.and]: [{ session_id }, { expirationDate: { [Op.gt]: new Date() } }],
       },
-      include: UserInfo,
+      include: {
+        model: User,
+        as: 'sessions_userid_fk',
+        include: {
+          model: UserInfo,
+          as: 'userinfo_userid_fk',
+        },
+      },
     }).then((data) => {
       if (!data) {
         return res
           .status(401)
           .send({ message: 'No user found with this session' });
       }
-      // console.log(JSON.stringify(data, null, 2));
+      console.log(JSON.stringify(data, null, 2));
       res.status(200).send({
         user_id: data.user_id,
-        user_data: data.UserInfo,
+        user_data: data?.sessions_userid_fk?.userinfo_userid_fk,
       });
     });
   },
@@ -138,14 +181,25 @@ module.exports = {
       where: {
         [Op.and]: [{ session_id }, { expirationDate: { [Op.gt]: new Date() } }],
       },
-      include: UserInfo,
+      // include: UserInfo,
+      include: {
+        model: User,
+        as: 'sessions_userid_fk',
+        include: {
+          model: UserInfo,
+          as: 'userinfo_userid_fk',
+        },
+      },
     }).then((data) => {
       if (!data) {
         return res
           .status(401)
           .send({ message: 'No user found with this session' });
       }
-      if (data.UserInfo.user_id !== userToChange && !data.UserInfo.admin) {
+      if (
+        data?.sessions_userid_fk?.userinfo_userid_fk.user_id !== userToChange &&
+        !data?.sessions_userid_fk?.userinfo_userid_fk.admin
+      ) {
         // console.log({dataUser: data.UserInfo.user_id ,userToChange})
         return res
           .status(401)

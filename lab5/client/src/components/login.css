@@ -364,6 +364,7 @@ form .btn input[type='submit'] {
   padding: 15px;
   border-radius: 10px;
   margin-right: 5px;
+  margin-left: 5px;
 }
 
 .saveChangesButton:hover{
@@ -385,6 +386,19 @@ form .btn input[type='submit'] {
 
 .logOutButton:hover{
   background-color: #9e0404;
+}
+
+.deleteButton {
+  margin-top: 10px;
+  border-width: 0;
+  color: white;
+  font-size: 1.5rem;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: #e60b0b;
+  padding: 15px;
+  border-radius: 10px;
+  margin-right: 5px;
 }
 
 .userData {

@@ -63,6 +63,34 @@ function UserData(props) {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            const response = await fetch('http://localhost:3005/user', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: cookies.sessionID,
+                    user_data: editedUserData
+                }),
+                credentials: 'include'
+            });
+            if (response.status === 200) {
+                // reload
+                setTimeout(() => {
+                    window.location.reload(false)
+                }, 750)
+            } else if (response.status === 401) {
+                console.log('401 response')
+            } else {
+                console.log('Some other error');
+            }
+        } catch (error) {
+            console.log('Error while getting user data', error);
+        }
+    };
+
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -186,6 +214,7 @@ function UserData(props) {
                                 </div>
                             </div>
                             <div className='buttonsContainer'>
+                            <button className='deleteButton' onClick={handleDelete}>Delete user</button>
                                 <button className='saveChangesButton' onClick={handleSaveChanges}>Save changes</button>
                                 <button className='logOutButton' onClick={handleLogout}>Log Out</button>
                             </div>

@@ -5,9 +5,9 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Session.belongsTo(models.User, {
         foreignKey: 'user_id',
-      });
-      Session.belongsTo(models.UserInfo, {
-        foreignKey: 'user_id',
+        as: 'sessions_userid_fk',
+        onDelete: 'cascade',
+        include: [models.UserInfo]
       });
     }
   }

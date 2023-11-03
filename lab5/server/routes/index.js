@@ -8,7 +8,7 @@ async function routes(fastify /*, options*/) {
   fastify.post('/login', userController.login);
   fastify.post('/userdata', userController.getUserData)
   fastify.post('/changeuser', userController.update)
-  fastify.delete('/user/:id', userController.delete);
+  fastify.delete('/user', userController.delete);
   fastify.get('/users', userController.list);
 }
 
