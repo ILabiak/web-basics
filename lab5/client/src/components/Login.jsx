@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 
 
+
 function Login(props) {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies();
@@ -20,8 +21,15 @@ function Login(props) {
     const [email, setEmail] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
-    const [signupEmail, setSignupEmail] = useState('');
-    const [signupPassword, setSignupPassword] = useState('');
+    const [signupData, setSignupData] = useState({
+        email: '',
+        password: '',
+        pib: '',
+        variant: '',
+        phone_number: '',
+        faculty: '',
+        address: '',
+    })
     const [signupConfirmPassword, setSignupConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState({
         login: false,
@@ -33,11 +41,20 @@ function Login(props) {
     const [signUpStatusText, setSignUpStatusText] = useState('');
     const [signUpSuccess, setSignUpSuccess] = useState(false);
 
+    const validationRules = {
+        pib: /^[А-ЯҐЄІЇа-яґєії]{2,15}\s[А-ЯҐЄІЇ].[А-ЯҐЄІЇ].$/,
+        variant: /^[0-9]{1,2}$/,
+        phone_number: /^[(][0-9]{3}[)]-[0-9]{3}-[0-9]{2}-[0-9]{2}$/,
+        faculty: /^[А-ЯҐЄІЇа-яґєії]{2,4}$/,
+        address: /^м.\s[А-ЯҐЄІЇа-яґєії]{3,20}$/,
+    };
+
     const handleSignupClick = () => {
         const loginText = document.querySelector('.title-text .login');
         const loginForm = document.querySelector('form.login');
         loginForm.style.marginLeft = '-50%';
         loginText.style.marginLeft = '-50%';
+        loginContainerRef.current.style.maxHeight = '1700px'
     };
 
     const handleLoginClick = () => {
@@ -45,6 +62,7 @@ function Login(props) {
         const loginForm = document.querySelector('form.login');
         loginForm.style.marginLeft = '0%';
         loginText.style.marginLeft = '0%';
+        loginContainerRef.current.style.maxHeight = '500px'
     };
 
     const handleSignupLinkClick = () => {
@@ -61,16 +79,12 @@ function Login(props) {
         setPassword(event.target.value);
     };
 
-    const handleSignupEmailChange = (event) => {
-        setSignupEmail(event.target.value);
-    };
-
-    const handleSignupPasswordChange = (event) => {
-        setSignupPassword(event.target.value);
-    };
-
-    const handleSignupConfirmPasswordChange = (event) => {
-        setSignupConfirmPassword(event.target.value);
+    const handleSignupDataChange = (event) => {
+        setSignupData(data => ({
+            ...data,
+            [event.target.id]: event.target.value
+        }))
+        // console.log(signupData)
     };
 
     const handleTogglePasswordVisibility = (field) => {
@@ -89,6 +103,10 @@ function Login(props) {
         setSignUpSuccess(false);
         setSignUpStatusText('');
     };
+
+    function validateField(fieldName, value) {
+        return validationRules[fieldName].test(value);
+    }
 
 
     const handleLoginSubmit = async (event) => {
@@ -140,31 +158,41 @@ function Login(props) {
     const handleSignupSubmit = async (event) => {
         event.preventDefault();
 
-        // Check if passwords match
-        if (signupPassword !== signupConfirmPassword) {
-            setSignUpSuccess(false);
-            setSignUpStatusText('Паролі не співпадають');
-            return;
+        // Check if signup data is valid
+        // if (signupPassword !== signupConfirmPassword) {
+        //     setSignUpSuccess(false);
+        //     setSignUpStatusText('Паролі не співпадають');
+        //     return;
+        // }
+        for (const field in validationRules) {
+            const value = document.getElementById(field).value;
+            const isValidField = validateField(field, value);
+            if (!isValidField) {
+                setSignUpSuccess(false);
+                setSignUpStatusText(`Поле ${field} заповнено неправильно`);
+                return;
+            }
         }
 
         try {
-            const response = await fetch(process.env.REACT_APP_API_URL + '/signup', {
+            console.log('data, ', signupData)
+            const response = await fetch('http://localhost:3005/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email: signupEmail, password: signupPassword }),
+                body: JSON.stringify(signupData),
                 credentials: 'include'
             });
 
             if (response.status === 201) {
-                const responseData = await response.json();
+                // const responseData = await response.json();
                 // Successful sign-up
                 setSignUpSuccess(true);
                 setSignUpStatusText('Реєстрація пройшла успішно');
-                setTimeout(() => {
-                    window.location.reload(false);
-                }, 750);
+                // setTimeout(() => {
+                //     window.location.reload(false);
+                // }, 1000);
             } else if (response.status === 400) {
                 // Handle other response statuses (e.g., validation errors, server errors)
                 const responseData = await response.json();
@@ -175,7 +203,7 @@ function Login(props) {
                     setSignUpStatusText(responseData.error);
                 }
                 setSignUpSuccess(false);
-            }else {
+            } else {
                 setSignUpSuccess(false);
                 setSignUpStatusText('Помилка на сервері, спробуйте пізніше');
             }
@@ -301,13 +329,14 @@ function Login(props) {
                                 </div>
                             )}
                             <div className='field'>
-                                <input type='text' placeholder='Електронна пошта' onChange={handleSignupEmailChange} required />
+                                <input type='text' placeholder='Електронна пошта' id='email' onChange={handleSignupDataChange} required />
                             </div>
                             <div className='field'>
                                 <input
                                     type={showPassword.signup ? 'text' : 'password'}
                                     placeholder='Пароль'
-                                    onChange={handleSignupPasswordChange}
+                                    id='password'
+                                    onChange={handleSignupDataChange}
                                     required
                                 />
                                 <span
@@ -320,6 +349,21 @@ function Login(props) {
                                 </span>
                             </div>
                             <div className='field'>
+                                <input type='text' placeholder='ПІБ' id='pib' onChange={handleSignupDataChange} required />
+                            </div>
+                            <div className='field'>
+                                <input type='text' placeholder='Варіант' id='variant' onChange={handleSignupDataChange} required />
+                            </div>
+                            <div className='field'>
+                                <input type='text' placeholder='Телефон' id='phone_number' onChange={handleSignupDataChange} required />
+                            </div>
+                            <div className='field'>
+                                <input type='text' placeholder='Факультет' id='faculty' onChange={handleSignupDataChange} required />
+                            </div>
+                            <div className='field'>
+                                <input type='text' placeholder='Адреса' id='address' onChange={handleSignupDataChange} required />
+                            </div>
+                            {/* <div className='field'>
                                 <input
                                     type={showPassword.signupConfirm ? 'text' : 'password'}
                                     placeholder='Підтвердіть пароль'
@@ -334,7 +378,7 @@ function Login(props) {
                                         icon={showPassword.signupConfirm ? faEyeSlash : faEye}
                                     />
                                 </span>
-                            </div>
+                            </div> */}
                             <div className='field btn'>
                                 <div className='btn-layer'></div>
                                 <input type='submit' onClick={handleSignupSubmit} value='Зареєструватись' />

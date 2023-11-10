@@ -26,27 +26,58 @@ module.exports = {
   },
 
   add(req, res) {
+    // user_id, pib, variant, phone_number, faculty, address, admin?
     const passwordHash = hashPassword(req.body.password);
     if (passwordHash) {
-      return User.create({
+      User.create({
         email: req.body.email,
-        password: passwordHash,
+        passhash: passwordHash,
       })
         .then((user) => {
           if (!user) {
             return res.status(401).send({ message: 'Error while signing up' });
           }
-          res.status(201).send({
-            user: user.email || user.id,
-            message: 'Signup successful',
-          });
+          UserInfo.create({
+            user_id: user.id,
+            pib: req.body.pib,
+            variant: req.body.variant,
+            phone_number: req.body.phone_number,
+            faculty: req.body.faculty,
+            address: req.body.address,
+            admin: false,
+          }).then((userInfo) => {
+              if (!userInfo) {
+                return res
+                  .status(401)
+                  .send({ message: 'Error while signing up (userInfo)' });
+              }
+              // console.log('created', {
+              //   message: 'Signup successful',
+              //   user: user.id,
+              //   pib: userInfo.pib,
+              // })
+              return res.status(201).send({
+                message: 'Signup successful',
+                user: user.id,
+                pib: userInfo.pib,
+              });
+            })
+            .catch((error) => {
+              User.destroy({ where: { id: user.id } }).then(() =>{
+                return res.status(400).send({ error });
+              })
+              return res.status(400).send({ error });
+            });
         })
         .catch((error) => {
+          if(!error?.errors[0]){
+            return res.status(400).send(error)
+          }
           const errArr = [];
           error.errors.map((er) => {
             errArr.push(er.message);
           });
-          res.status(400).send({ error: errArr.join(' ') });
+          return res.status(400).send({ error: errArr.join(' ') });
         });
     } else {
       res.status(400).send(new Error('Could not hash password'));
@@ -92,12 +123,10 @@ module.exports = {
             .then(() => {
               User.destroy({ where: { id: userToDelete } })
                 .then(() =>
-                  res
-                    .status(200)
-                    .send({
-                      message:
-                        'User and associated data were successfully deleted!',
-                    })
+                  res.status(200).send({
+                    message:
+                      'User and associated data were successfully deleted!',
+                  })
                 )
                 .catch((error) => res.status(400).send(error));
             })

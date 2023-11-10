@@ -3,7 +3,7 @@
 require('dotenv').config();
 
 const fastify = require('fastify')({
-//   logger: true,
+  // logger: true,
 });
 
 fastify.register(require('@fastify/cors'), {
@@ -25,3 +25,4 @@ module.exports = fastify;
 // somemail@gmail.com password123 $2b$10$WgTmn9X5LhY3iFucGGyQy.jEAIlrnnbi17iN45j5CAfVs989Qb7Ju
 // gmail@gmail.com qwerty123123 $2b$10$Z2RmViwtqBR8A47ltX9GPONk9xVXd9.WNp13/uKUsJWI8FpBocGmG
 // admin@gmail.com pass123123 $2b$10$Hxw64GnGCVfb.AvKCTpK9eERNDXSXcifSNhTCUfhET/6MpbTh6GNq
+// 12345@test.com password123
